@@ -1,4 +1,4 @@
-i :{(z#y),x,(z_y)} / insert element x into array y before index z
+i :{(z#y),x,(z _ y)} / insert element x into array y before index z
 p: { $[x=1; enlist enlist 0; raze (.z.s x-1) i[x-1]\:/: til x]}
 d: ("S S I"; " ")0: `:9.txt
 syms: distinct raze d 0 1

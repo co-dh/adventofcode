@@ -5,30 +5,22 @@ import nre, strutils, sequtils, math, json
 
 let j = "12.txt".readFile.parseJson()
 proc sum1(j: JsonNode): BiggestInt=
-  var sum2:BiggestInt = 0
   case j.kind
   of JObject:
     for key, val in j.pairs:
       if val.kind == JString and val.str == "red":
-        sum2 = 0
+        result = 0
         break
-      sum2 = sum2 + sum1(val)
-    sum2
+      result = result + sum1(val)
   of JArray:
     for val in j.items:
-      sum2 = sum2 + sum1(val)
-    sum2
-  of JNull:
-    0
-  of JBool:
-    0
+      result = result + sum1(val)
+  of JNull, JBool, JString:
+    result = 0
   of JInt:
-    j.num
+    result = j.num
   of JFloat:
-    j.fnum.toBiggestInt
-  of JString:
-    0
+    result = j.fnum.toBiggestInt
 
 echo j.sum1
-
 
