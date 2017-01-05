@@ -1,86 +1,118 @@
+* Advent Of Code: Day 4
+    [[http://adventofcode.com/2016/day/4]day 4]
+    #+BEGIN_QUOTE
+    Each room consists of an encrypted name (lowercase letters separated by dashes) followed by a dash, 
+	a sector ID, and a checksum in square brackets.
+    A room is real (not a decoy) if the checksum is the five most common letters in the encrypted name, 
+	in order, with ties broken by alphabetization. For example:
+    #+END_QUOTE
+	+ aaaaa-bbb-z-y-x-123[abxyz] is a real room because the most common letters are a (5), b (3), and then a tie between x, y, and z, which are listed alphabetically.
+	+ a-b-c-d-e-f-g-h-987[abcde] is a real room because although the letters are all tied (1 of each), the first five are listed alphabetically.
+	+ not-a-real-room-404[oarel] is a real room.
+	+ totally-real-room-200[decoy] is not.
+
+** Product of functions
+*** Binary Product 
+    A production of function f: A->B, g: a->b, is a function f*g:(A,a)->(B,b)
+    #+BEGIN_SRC q
+    prod2:{[f;g]{(f x[0]; g x[1])}}
+    #+END_SRC
+
+    #+RESULTS:
+
+    | f:{x+1}        |     |
+    | g:{x*2}        |     |
+    | prod2[f;g] 2 2 | 3 4 |
+    #+TBLFM: $2='(qq $-1)
+    
+    
+*** Multiary Product
+    Since binary product is associative, we can reduce it over a list of functions.
+    | apply f to 2                       | f 2                                        | 3                                     |
+    | is same as                         | f @ 2                                      | 3                                     |
+    | @ is the apply function            | @[f;2]                                     | 3                                     |
+    | . convert @ from 2 arguments to 1  | .[@] (f;2)                                 | 3                                     |
+    | argument of a list of two elements |                                            |                                       |
+    |------------------------------------+--------------------------------------------+---------------------------------------|
+    | :: is id function {[x]x}           | fs: ({-1_x}; ::)                           | ({-1_x};::)                           |
+    |                                    | a: ("ab"; "cd")                            | ("ab";"cd")                           |
+    |                                    | pair: fs,' enlist each a                   | (({-1_x};"ab");(::;"cd"))             |
+    |                                    | .[@] each pair                             | (,"a";"cd")                           |
+    |                                    | prod:{[fs;a] .[@] each fs,' enlist each a} | {[fs;a] .[@] each fs,' enlist each a} |
+    |------------------------------------+--------------------------------------------+---------------------------------------|
+    | Example                            | prod[(f;g;f);] 2 2 2                       | 3 4 3                                 |
+   #+TBLFM: $3='(qk $-1)
 
 
-f: {
- ; d1: d pj/ {([k: enlist x] v: enlist 1)} each raze -1_ "-" vs x
- ; common : 5 # raze exec k from `v xdesc select asc k by v from d1 where v <> 0 
- ; ck: -1 _ last "[" vs x
- ; $[common ~ ck; "I"$ first "[" vs last "-" vs x ; 0]
- } 
+** Parse
+    Given a string like above, we can parse it to 3 parts: encrypted name, sector, checksum
+    |   | Function                          | "aaaaa-bbb-z-y-x-123[abxyz]"                                                         |
+    |---+-----------------------------------+--------------------------------------------------------------------------------------|
+    |   | "[" vs                            | ("aaaaa-bbb-z-y-x-123";"abxyz]")                                                     |
+    |   | prod[("-"vs;{-1_x})]              | (("aaaaa";"bbb";,"z";,"y";,"x";"123");"abxyz")                                       |
+    |   | {(top5 -1_x 0;"I"$last x 0; x 1)} | ("abxyz";123i;"abxyz")                                                               |
+    |   | {x[1] * x[0]~x[2]}                | 123i                                                                                 |
+    |---+-----------------------------------+--------------------------------------------------------------------------------------|
+    |   | parser:                           | {{x[1] * x[0]~x[2]} {(top5 -1_x 0;"I"$last x 0; x 1)} prod[("-"vs;{-1_x})] "[" vs x} |
+    #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
 
-f x: "aaaaa-bbb-z-y-x-123[abxyz]"
-f "a-b-c-d-e-f-g-h-987[abcde]"
-f "not-a-real-room-404[oarel]"
-f "totally-real-room-200[decoy]"
-sum f each t
+ 
+** Top 5 Common Letters 
 
-src_q{"-" vs x} ="aaaaa"
-"bbb"
-,"z"
-,"y"
-,"x"
-"123[abxyz]"
-=
+*** ele function: create one element dictionary with key x and value 1
+    #+BEGIN_SRC q 
+      / display 10 row at most
+      \c 10 80 
+      ele:  {enlist[x]!enlist 1} 
+      ele "a"
+    #+END_SRC
 
-#+begin_src q 
-  d:([]k: .Q.a; v: 26#0)
-  d
-#+end_src
+    #+RESULTS:
+    : a| 1
 
-#+RESULTS:
-#+begin_example
-k v
----
-a 0
-b 0
-c 0
-d 0
-e 0
-f 0
-g 0
-h 0
-i 0
-j 0
-k 0
-l 0
-m 0
-n 0
-o 0
-p 0
-q 0
-r 0
-s 0
-t 0
-..
-#+end_example
+*** You can add 2 dictionary.
+     | 0N! will print x in compact form(k form) | x: 0N! ele "a"  | (,"a")!,1 |
+     | assignment stop print y                  | y: 0N! "ab"!3 2 | "ab"!3 2  |
+     | assign to foo so it's not displayed.     | foo: 0N! x + y  | "ab"!4 2  |
+    #+TBLFM: $3='(qq $-1)
 
-First, define an auxilary function that for each character of x, generate a dictionary
-#+begin_src q
-ele: {([k: enlist x] v: enlist 1)}
-#+end_src
+*** top5
+   Now we can define a function that return 5 most common letters of strings
+    | Description      | Function       | ("aaa";"bbbbb"; "z";"y"; "x")                                                   |
+    |------------------+----------------+---------------------------------------------------------------------------------|
+    | concat           | raze           | "aaabbbbbzyx"                                                                   |
+    |                  | ele each       | ((,"a")!,1;(,"a")!,1;(,"a")!,1;(,"b")!,1;(,"b")!,1;(,"b")!,1;(,"b")!,1;(,"b").. |
+    | add all dict     | sum            | "abzyx"!3 5 1 1 1                                                               |
+    | group by value   | group          | 3 5 1!(,"a";,"b";"zyx")                                                         |
+    |                  | asc each       | 3 5 1!(`s#,"a";`s#,"b";`s#"xyz")                                                |
+    | sort desc by key | {x desc key x} | (`s#,"b";`s#,"a";`s#"xyz")                                                      |
+    |                  | raze           | "baxyz"                                                                         |
+    |                  | 5 #            | "baxyz"                                                                         |
+    |------------------+----------------+---------------------------------------------------------------------------------|
+    |                  | top5:          | {5 # raze {x desc key x} asc each group sum ele each raze x}                    |
+    #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
+    
+    We can verify
+  | top5 -1 _ "-" vs "aaaaa-bbb-z-y-x-123[abxyz]"   | "abxyz" |
+  | top5 -1 _ "-" vs "a-b-c-d-e-f-g-h-987[abcde]"   | "abcde" |
+  | top5 -1 _ "-" vs "not-a-real-room-404[oarel]"   | "oarel" |
+  | top5 -1 _ "-" vs "totally-real-room-200[decoy]" | "loart" |
+  #+TBLFM: $2='(qq $1)
 
-#+RESULTS:
-: 1 2 3
-: `s#1 2 3
+** Checksum
+     | Function  | "aaaaa-bbb-z-y-x-123[abxyz]"     |
+     |-----------+----------------------------------|
+     | "[" vs    | ("aaaaa-bbb-z-y-x-123";"abxyz]") |
+     | last      | "abxyz]"                         |
+     | -1 _      | "abxyz"                          |
+     |-----------+----------------------------------|
+     | checksum: | {-1 _ last "[" vs x}             |
+    #+TBLFM: @>$2='(qq (qf "top5: 0N! " @2$1..@-1$1 ))::$2='(qq (step @# $-1 @-1))
 
-Let's define a function with example argument in the first row of below table. 
- | "aaaaa-bbb-z-y-x-115[abxyz]" |                                                                                 |
- | "-" vs                       | ("aaaaa";"bbb";,"z";,"y";,"x";"115[abxyz]")                                     |
- | -1 _                         | ("aaaaa";"bbb";,"z";,"y";,"x")                                                  |
- | raze                         | "aaaaabbbzyx"                                                                   |
- | ele each                     | ((+(,`k)!,,"a")!+(,`v)!,,1;(+(,`k)!,,"a")!+(,`v)!,,1;(+(,`k)!,,"a")!+(,`v)!,,.. |
- | ([]k: .Q.a; v: 26#0) pj/     | +`k`v!("abcdefghijklmnopqrstuvwxyz";5 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.. |
- | ![; enlist(=;`v;0); 0b; 0#`] | +`k`v!("abxyz";5 3 1 1 1)                                                       |
- | select asc k by v from       | (`s#+(,`v)!,`s#1 3 5)!+(,`k)!,(`s#"xyz";`s#,"b";`s#,"a")                        |
- | `v xdesc                     | (+(,`v)!,5 3 1)!+(,`k)!,(`s#,"a";`s#,"b";`s#"xyz")                              |
- | exec k from                  | (`s#,"a";`s#,"b";`s#"xyz")                                                      |
- | raze                         | "abxyz"                                                                         |
- | 5 #                          | "abxyz"                                                                         |
-#+TBLFM: $2='(qq(step @# $-1))
+** Auxilary 
 
-#+begin_src q 
-  \c 5 200
-  t: read0 `:4.txt
-  t
+    #+begin_src q 
+      show t: read0 `:4.txt
 #+end_src
 
 #+RESULTS:
@@ -92,4 +124,11 @@ Let's define a function with example argument in the first row of below table.
 : "irgyyolokj-xghhoz-lotgtiotm-228[vnmxd]"
 : "foadouwbu-gqojsbusf-vibh-fsgsofqv-376[ymswi]"
 : ..
+
+f: {
+ ; d1: d pj/ {([k: enlist x] v: enlist 1)} each raze -1_ "-" vs x
+ ; common : 5 # raze exec k from `v xdesc select asc k by v from d1 where v <> 0 
+ ; ck: -1 _ last "[" vs x
+ ; $[common ~ ck; "I"$ first "[" vs last "-" vs x ; 0]
+ } 
 
