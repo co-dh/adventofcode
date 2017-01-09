@@ -1,6 +1,6 @@
 * Advent Of Code: Day 4
     This is a solution to the advent of code puzzle [[http://adventofcode.com/2016/day/4][day 4]] in a [[https://en.wikipedia.org/wiki/Tacit_programming][Point Free]] style and avoided lambda.
-    It use functions defined in the cat.org. 
+    It use functions defined in the [[https://github.com/co-dh/adventofcode/blob/master/2016/cat.org][cat.org]] 
 ** Problem Description:
     #+BEGIN_QUOTE
     Each room consists of an encrypted name (lowercase letters separated by dashes) followed by a dash, 
