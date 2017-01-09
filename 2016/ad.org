@@ -165,14 +165,3 @@
     #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
 
 
-   #+BEGIN_SRC q :exports both
-  show d: 1 2 ! "ab"
-  d @ 1
-   #+END_SRC
-
-   #+RESULTS:
-   : 1| a
-   : 2| b
-   : "a"
-
-
