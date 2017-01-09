@@ -1,0 +1,46 @@
+* Product of functions
+** Binary Product Of Functions 
+    A production of function f: A->B, g: a->b, is a function f*g:(A,a)->(B,b)
+    #+BEGIN_SRC q
+    / display 10 row at most
+    \c 5 80 
+    prod2:{[f;g]{(f x[0]; g x[1])}}
+    #+END_SRC
+
+    #+RESULTS:
+
+    | f:{x+1}        |     |
+    | g:{x*2}        |     |
+    | prod2[f;g] 2 2 | 3 4 |
+    #+TBLFM: $2='(qq $-1)
+    
+    
+** Multiary Product Of Functions
+    Since binary product is associative, we can reduce it over a list of functions.
+    | apply f to 2                       | f 2                                        | 3                                     |
+    | is same as                         | f @ 2                                      | 3                                     |
+    | @ is the apply function            | @[f;2]                                     | 3                                     |
+    | . convert @ from 2 arguments to 1  | .[@] (f;2)                                 | 3                                     |
+    | argument of a list of two elements |                                            |                                       |
+    |------------------------------------+--------------------------------------------+---------------------------------------|
+    | :: is id function {[x]x}           | fs: ({-1_x}; ::)                           | ({-1_x};::)                           |
+    |                                    | a: ("ab"; "cd")                            | ("ab";"cd")                           |
+    |                                    | pair: fs,' enlist each a                   | (({-1_x};"ab");(::;"cd"))             |
+    |                                    | .[@] each pair                             | (,"a";"cd")                           |
+    |                                    | prod:{[fs;a] .[@] each fs,' enlist each a} | {[fs;a] .[@] each fs,' enlist each a} |
+    |------------------------------------+--------------------------------------------+---------------------------------------|
+    | Example                            | prod[(f;g;f);] 2 2 2                       | 3 4 3                                 |
+   #+TBLFM: $3='(qk $-1)
+
+* fork function
+     | fork                  | fork:{(x;x)}                         |            |
+     | e.g.                  | fork 1                               | 1 1        |
+     |                       |                                      |            |
+     | ((x y))z -> (x (y z)) | associate:{(x[0;0]; (x[0;1]; x[1]))} |            |
+     | e.g.                  | foo: 0N! associate ((1 2); 3)        | (1;2 3)    |
+     |                       |                                      |            |
+     |                       | keyval:{(key x; value x)}            |            |
+     | e.g.                  | foo: 0N! keyval "ab"!1 2             | ("ab";1 2) |
+    #+TBLFM: $3='(qq $-1)
+
+
