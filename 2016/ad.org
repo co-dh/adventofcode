@@ -1,5 +1,7 @@
 * Advent Of Code: Day 4
-    [[http://adventofcode.com/2016/day/4][day 4]]
+    This is a solution to the advent of code puzzle [[http://adventofcode.com/2016/day/4][day 4]] in a [[https://en.wikipedia.org/wiki/Tacit_programming][Point Free]] style and avoided lambda.
+    It use functions defined in the cat.org. 
+** Problem Description:
     #+BEGIN_QUOTE
     Each room consists of an encrypted name (lowercase letters separated by dashes) followed by a dash, 
 	a sector ID, and a checksum in square brackets.
@@ -13,7 +15,7 @@
 
 ** Top 5 Common Letters 
 *** Create an 1 element dictionary with key x and value 1
-    #+BEGIN_SRC q 
+    #+BEGIN_SRC q :exports both
       ele:  {enlist[x]!enlist 1} 
       ele "a"
     #+END_SRC
