@@ -1,5 +1,5 @@
 * Advent Of Code: Day 4
-    [[http://adventofcode.com/2016/day/4] 4]
+    [[http://adventofcode.com/2016/day/4][day 4]]
     #+BEGIN_QUOTE
     Each room consists of an encrypted name (lowercase letters separated by dashes) followed by a dash, 
 	a sector ID, and a checksum in square brackets.
