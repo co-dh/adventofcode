@@ -113,3 +113,66 @@
 : 158835i
 
 
+* Part Two
+  #+BEGIN_QUOTE
+  To decrypt a room name, rotate each letter forward through the alphabet a number of times 
+  equal to the room's sector ID. A becomes B, B becomes C, Z becomes A, and so on. 
+  Dashes become spaces.
+
+  For example, the real name for qzmt-zixmtkozy-ivhz-343 is very encrypted name.
+  #+END_QUOTE
+
+
+** Decrypt Word
+    |           | Function             | ("qzmt";343)                                                                                              |
+    |-----------+----------------------+-----------------------------------------------------------------------------------------------------------|
+    |           | prod[("i" $; ::)]    | (113 122 109 116i;343)                                                                                    |
+    | 97 is "a" | prod[(-97 +; ::)]    | (16 25 12 19;343)                                                                                         |
+    |           | fork                 | ((16 25 12 19;343);(16 25 12 19;343))                                                                     |
+    |           | prod[(.[+]; last)]   | (359 368 355 362;343)                                                                                     |
+    |           | prod[(mod[;26]; ::)] | (21 4 17 24;343)                                                                                          |
+    |           | prod[({.Q.a x}; ::)] | ("very";343)                                                                                              |
+    |-----------+----------------------+-----------------------------------------------------------------------------------------------------------|
+    |           | decryptWord :        | {prod[({.Q.a x}; ::)] prod[(mod[;26]; ::)] prod[(.[+]; last)] fork prod[(-97 +; ::)] prod[("i" $; ::)] x} |
+    #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
+
+** Decrypt Sentence 
+    |   | Function                   | "qzmt-zixmtkozy-ivhz-343[oshgk]"                                                                                                         |
+    |---+----------------------------+------------------------------------------------------------------------------------------------------------------------------------------|
+    |   | "[" vs                     | ("qzmt-zixmtkozy-ivhz-343";"oshgk]")                                                                                                     |
+    |   | first                      | "qzmt-zixmtkozy-ivhz-343"                                                                                                                |
+    |   | "-" vs                     | ("qzmt";"zixmtkozy";"ivhz";"343")                                                                                                        |
+    |   | fork                       | (("qzmt";"zixmtkozy";"ivhz";"343");("qzmt";"zixmtkozy";"ivhz";"343"))                                                                    |
+    |   | prod[(-1_; last)]          | (("qzmt";"zixmtkozy";"ivhz");"343")                                                                                                      |
+    |   | prod[(::; "I"$)]           | (("qzmt";"zixmtkozy";"ivhz");343i)                                                                                                       |
+    |   | {x[0] {enlist[x],y}\: x 1} | (("qzmt";343i);("zixmtkozy";343i);("ivhz";343i))                                                                                         |
+    |   | decryptWord each           | (("very";343i);("encrypted";343i);("name";343i))                                                                                         |
+    |   | unzip                      | (("very";"encrypted";"name");343 343 343i)                                                                                               |
+    |   | prod[(" " sv ; last )]     | ("very encrypted name";343i)                                                                                                             |
+    |---+----------------------------+------------------------------------------------------------------------------------------------------------------------------------------|
+    |   | decryptSentence:           | {prod[(" " sv ; last )] unzip decryptWord each {x[0] {enlist[x],y}\: x 1} prod[(::; "I"$)] prod[(-1_; last)] fork "-" vs first "[" vs x} |
+    #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
+
+** Answer
+    |   | Function                               | t                                                                                  |
+    |---+----------------------------------------+------------------------------------------------------------------------------------|
+    |   | decryptSentence each                   | (("consumer grade flower financing";769i);("rampaging candy coating acquisiti..    |
+    |   | unzip                                  | (("consumer grade flower financing";"rampaging candy coating acquisition";"mi..    |
+    |   | prod[({where x like\: "*north*"}; ::)] | (,947;769 339 743 308 142 228 376 903 236 217 235 393 893 627 563 171 809 315..    |
+    |   | {x[1][x[0]]}                           | ,993i                                                                              |
+    |---+----------------------------------------+------------------------------------------------------------------------------------|
+    |   | part2:                                 | {{x[1][x[0]]} prod[({where x like\: "*north*"}; ::)] unzip decryptSentence each x} |
+    #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
+
+
+   #+BEGIN_SRC q :exports both
+  show d: 1 2 ! "ab"
+  d @ 1
+   #+END_SRC
+
+   #+RESULTS:
+   : 1| a
+   : 2| b
+   : "a"
+
+
