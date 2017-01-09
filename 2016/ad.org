@@ -67,7 +67,7 @@
     #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
 
 
-*** Equal function
+*** Convert Match(~) To One Argument Of Tuple 
   | "abc" ~ "abc"       | 1b |
   | ~["abc";  "abc"]    | 1b |
   | .[~] ("abc"; "abc") | 1b |
@@ -90,7 +90,7 @@
 
 ** Answer 
 
-#+begin_src q 
+#+begin_src q :exports both 
   show t: read0 `:4.txt
 #+end_src
 
@@ -104,7 +104,7 @@
 : "foadouwbu-gqojsbusf-vibh-fsgsofqv-376[ymswi]"
 : ..
 
-#+BEGIN_SRC q
+#+BEGIN_SRC q :exports both
   sum 0N! parser each t 
 #+END_SRC
 
