@@ -32,13 +32,11 @@
     | Example                            | prod[(f;g;f);] 2 2 2                       | 3 4 3                                 |
    #+TBLFM: $3='(qk $-1)
 
-* fork function
-     | fork                  | fork:{(x;x)}                         |            |
+* Misc Functions
+     |                       | fork:{(x;x)}                         |            |
      | e.g.                  | fork 1                               | 1 1        |
-     |                       |                                      |            |
      | ((x y))z -> (x (y z)) | associate:{(x[0;0]; (x[0;1]; x[1]))} |            |
      | e.g.                  | foo: 0N! associate ((1 2); 3)        | (1;2 3)    |
-     |                       |                                      |            |
      |                       | keyval:{(key x; value x)}            |            |
      | e.g.                  | foo: 0N! keyval "ab"!1 2             | ("ab";1 2) |
     #+TBLFM: $3='(qq $-1)
