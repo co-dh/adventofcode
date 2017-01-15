@@ -30,6 +30,13 @@
     #+TBLFM: $3='(qq $-1)
 
 *** top5
+    #+BEGIN_SRC q
+    keyval: { (key[x];value x)}
+    swap:{(x[1];x[0])}
+    #+END_SRC
+
+    #+RESULTS:
+
    Now we can define a function that return 5 most common letters of strings
     | Description     | Function | ("aaa";"bbbbb"; "z";"y"; "x")                                                   |
     |-----------------+----------+---------------------------------------------------------------------------------|
@@ -111,7 +118,7 @@
 #+RESULTS:
 : 0 0 0 0 0 0 0 0 236 0 0 393 893 0 563 0 0 0 0 0 0 0 0 0 0 0 0 0 0 748 0 0 623..
 : 158835i
-
+   
 
 * Part Two
   #+BEGIN_QUOTE
@@ -164,4 +171,35 @@
     |   | part2:                                 | {{x[1][x[0]]} prod[({where x like\: "*north*"}; ::)] unzip decryptSentence each x} |
     #+TBLFM: @>$3='(qq(qf $-1 @2$2..@-1$2 ))::$3='(qq (step @# $-1 @-1))
 
+** Another way of define function
 
+    |       | ("aaa";"bbbbb"; "z";"y"; "x")                                                     |
+    |-------+-----------------------------------------------------------------------------------|
+    |       | (,/)                                                                              |
+    |       | =>"aaabbbbbzyx"                                                                   |
+    |       | ele each                                                                          |
+    |       | =>((,"a")!,1;(,"a")!,1;(,"a")!,1;(,"b")!,1;(,"b")!,1;(,"b")!,1;(,"b")!,1;(,"b").. |
+    |       | sum                                                                               |
+    |       | =>"abzyx"!3 5 1 1 1                                                               |
+    |       | group                                                                             |
+    |       | =>3 5 1!(,"a";,"b";"zyx")                                                         |
+    |       | asc each                                                                          |
+    |       | =>3 5 1!(`s#,"a";`s#,"b";`s#"xyz")                                                |
+    |       | keyval                                                                            |
+    |       | =>(3 5 1;(`s#,"a";`s#,"b";`s#"xyz"))                                              |
+    |       | swap                                                                              |
+    |       | =>((`s#,"a";`s#,"b";`s#"xyz");3 5 1)                                              |
+    |       | .[!]                                                                              |
+    |       | =>(`s#,"a";`s#,"b";`s#"xyz")!3 5 1                                                |
+    |       | desc                                                                              |
+    |       | =>(`s#,"b";`s#,"a";`s#"xyz")!5 3 1                                                |
+    |       | key                                                                               |
+    |       | =>(`s#,"b";`s#,"a";`s#"xyz")                                                      |
+    |       | raze                                                                              |
+    |       | =>"baxyz"                                                                         |
+    |       | 5#                                                                                |
+    |       | =>"baxyz"                                                                         |
+    |-------+-----------------------------------------------------------------------------------|
+    | top5: | {5# raze key desc .[!] swap keyval asc each group sum ele each (,/) x}            |
+    #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+    
