@@ -3,13 +3,11 @@
 http://adventofcode.com/2016/day/5
 
 #+BEGIN_SRC q
-p2 : { [f;g; tuple] (f tuple 0; g tuple 1)} 
-fork: { (x;x)}
-" | a | b | "
+p2: {(x z 0; y z 1)} 
+fork: {(x;x)}
 #+END_SRC
 
 #+RESULTS:
-: " | a | b | "
 
 
 |        | 0x000004                                                          |
@@ -49,4 +47,41 @@ fork: { (x;x)}
 | top5: | top5: 0N! {2 _/: {x  where five0 each x} (3#) each md5 each "ojvtpuvg" ,/: string til x} |
 #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(identity (qf2 $-1 @2$2..@-1$2))
 
-* Part 2
+* Another way to explain q code 
+  I'd like to implement a trace function in q, and then show the result in org table.
+  Given two string sf, sg, which will eval to two functions:
+    eval sf = f : a -> b
+    eval sg = g : b -> c
+
+To trace,we need to passing the function string and result to the next function.
+We put them in a list.
+
+#+BEGIN_SRC q
+\c 25 160
+trace: {(y, enlist[x], enlist eval[parse x] last y)} 
+fs : reverse ("fork"; "p2[2#; {x[2]}]"; "p2[0x0000 =; 0x10>]"; "p2[(and/); ::]"; ".[and]")
+f:  ('[;]) over {trace[x;]} each fs
+fmt: { $[10=type x; x; -3! x]} 
+g: {1 "\n" sv fmt each f x }
+g enlist[0x000004]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+0x000004
+fork
+(0x000004;0x000004)
+p2[2#; {x[2]}]
+(0x0000;0x04)
+p2[0x0000 =; 0x10>]
+(11b;1b)
+p2[(and/); ::]
+11b
+.[and]
+1b1
+#+end_example
+
+| fork | p2[2#;{x[2]} | p2[0x0000=; 0x10>] | p2[(and/); ::] | .[and] |
+
+| #ERROR |
+#+TBLFM: $1='(qq2 "g enlist[0x000004]")
