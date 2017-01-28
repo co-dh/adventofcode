@@ -56,30 +56,31 @@ fork: {(x;x)}
 To trace,we need to passing the function string and result to the next function.
 We put them in a list.
 
-#+BEGIN_SRC q
+#+BEGIN_SRC q :results value
 \c 25 160
 trace: {(y, enlist[x], enlist eval[parse x] last y)} 
 fs : reverse ("fork"; "p2[2#; {x[2]}]"; "p2[0x0000 =; 0x10>]"; "p2[(and/); ::]"; ".[and]")
 f:  ('[;]) over {trace[x;]} each fs
 fmt: {$[10=type x; $[`p2 ~ first p: parse x; "|" sv (-3!) each 1_p; x]; -1 < type x and (4 > count x);  "|" sv (-3!) each x;  (-3!) x]} 
 g: {-1 "\n" sv fmt each f x }
-f enlist[0x00000004]
+g enlist[0x000004]
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-0x00000004
-"fork"
-(0x00000004;0x00000004)
-"p2[2#; {x[2]}]"
-(0x0000;0x00)
-"p2[0x0000 =; 0x10>]"
-(11b;1b)
-"p2[(and/); ::]"
-11b
-".[and]"
-1b
-#+end_example
+| 0x00       | 0x00     | 0x04 |
+| fork       |          |      |
+| 0x000004   | 0x000004 |      |
+| (#;2)      | {x[2]}   |      |
+| 0x0000     | 0x04     |      |
+| (=;0x0000) | (>;0x10) |      |
+| 11b        | 1b       |      |
+| (/;&)      | ::       |      |
+| 1b         | 1b       |      |
+| .[and]     |          |      |
+| 1b         |          |      |
+| -1         |          |      |
+
+
 
 | fork | p2[2#;{x[2]} | p2[0x0000=; 0x10>] | p2[(and/); ::] | .[and] |
 
