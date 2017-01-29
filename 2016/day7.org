@@ -1,0 +1,140 @@
+* Part 1 
+
+http://adventofcode.com/2016/day/7
+
+#+BEGIN_SRC q :results silent
+\l lib.q
+#+END_SRC
+
+
+
+|           | "ioxxoj[asdfgh]zxcvbn"                            |
+|-----------+---------------------------------------------------|
+|           | fork                                              |
+|           | =>("ioxxoj[asdfgh]zxcvbn";"ioxxoj[asdfgh]zxcvbn") |
+|           | p2[next; ::]                                      |
+|           | =>("oxxoj[asdfgh]zxcvbn ";"ioxxoj[asdfgh]zxcvbn") |
+|           | .[=]                                              |
+|           | =>00100000000000000000b                           |
+|-----------+---------------------------------------------------|
+| equNext : | {.[=] p2[next; ::] fork x}                        |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+|            | " aaaa[qwer]tyui"                       |
+|------------+-----------------------------------------|
+|            | fork                                    |
+|            | =>(" aaaa[qwer]tyui";" aaaa[qwer]tyui") |
+|            | p2[prev; ::]                            |
+|            | =>("  aaaa[qwer]tyu";" aaaa[qwer]tyui") |
+|            | .[=]                                    |
+|            | =>101110000000000b                      |
+|            | not                                     |
+|            | =>010001111111111b                      |
+|------------+-----------------------------------------|
+| NotEqPrev: | {not .[=] p2[prev; ::] fork x}          |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+|           | "ioxxoj[asdfgh]zxcvbn"                            |
+|-----------+---------------------------------------------------|
+|           | fork                                              |
+|           | =>("ioxxoj[asdfgh]zxcvbn";"ioxxoj[asdfgh]zxcvbn") |
+|           | p2[prev; next]                                    |
+|           | =>(" ioxxoj[asdfgh]zxcvb";"oxxoj[asdfgh]zxcvbn ") |
+|           | p2[::; next]                                      |
+|           | =>(" ioxxoj[asdfgh]zxcvb";"xxoj[asdfgh]zxcvbn  ") |
+|           | .[=]                                              |
+|           | =>00100000000000000000b                           |
+|-----------+---------------------------------------------------|
+| prevEq2n: | {.[=] p2[::; next] p2[prev; next] fork x}         |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+|       | "ioxxoj[asdfgh]zxcvbn"                                                   |
+|-------+--------------------------------------------------------------------------|
+|       | fork3                                                                    |
+|       | =>("ioxxoj[asdfgh]zxcvbn";"ioxxoj[asdfgh]zxcvbn";"ioxxoj[asdfgh]zxcvbn") |
+|       | p3[equNext ; NotEqPrev; prevEq2n]                                        |
+|       | =>(00100000000000000000b;11101111111111111111b;00100000000000000000b)    |
+|       | (and/)                                                                   |
+|       | =>00100000000000000000b                                                  |
+|       | where                                                                    |
+|       | =>,2                                                                     |
+|-------+--------------------------------------------------------------------------|
+| abba: | {where (and/) p3[equNext ; NotEqPrev; prevEq2n] fork3 x}                 |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+|           | "luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc" |
+|-----------+-------------------------------------------------------------------------------------------------|
+|           | fork                                                                                            |
+|           | =>("luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]..               |
+|           | p2["["=; "]"=]                                                                                  |
+|           | =>(0000000000000000010000000000000000000000000000000000000010000000000000000000..               |
+|           | where each                                                                                      |
+|           | =>(17 56;36 74)                                                                                 |
+| zip       | (.[,'])                                                                                         |
+|           | =>(17 36;56 74)                                                                                 |
+|-----------+-------------------------------------------------------------------------------------------------|
+| brackets: | {(.[,']) where each p2["["=; "]"=] fork x}                                                      |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+|                 | "luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc"                                                                                       |
+|-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                 | fork                                                                                                                                                                                  |
+|                 | =>("luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc";"luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhfl.. |
+|                 | p2[abba; brackets]                                                                                                                                                                    |
+|                 | =>(,69;(17 36;56 74))                                                                                                                                                                 |
+|                 | (.[within/:])                                                                                                                                                                         |
+|                 | =>(,0b;,1b)                                                                                                                                                                           |
+|                 | raze                                                                                                                                                                                  |
+|                 | =>01b                                                                                                                                                                                 |
+|                 | {$[0 = count x; 1b; any x]}                                                                                                                                                           |
+|                 | =>1b                                                                                                                                                                                  |
+|                 | not                                                                                                                                                                                   |
+|                 | =>0b                                                                                                                                                                                  |
+|-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| abbaNoBrackets: | {not {$[0 = count x; 1b; any x]} raze (.[within/:]) p2[abba; brackets] fork x}                                                                                                        |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+
+We can verify by:
+  | abbaNoBrackets "abba[mnop]qrst"       | 1b |
+  | abbaNoBrackets "abcd[bddb]xyyx"       | 0b |
+  | abbaNoBrackets "aaaa[qwer]tyui"       | 0b |
+  | abbaNoBrackets "ioxxoj[asdfgh]zxcvbn" | 1b |
+   #+TBLFM: $2='(qq $1)
+ 
+#+BEGIN_SRC q
+sum abbaNoBrackets each read0 `:7.txt
+
+#+END_SRC 
+
+#+RESULTS:
+| 115i |
+|      |
+
+* Part 2
+
+  |       | "aba[bab]xyz"                   |
+  |-------+---------------------------------|
+  |       | fork                            |
+  |       | =>("aba[bab]xyz";"aba[bab]xyz") |
+  |       | p2[prev; next]                  |
+  |       | =>(" aba[bab]xy";"ba[bab]xyz ") |
+  |       | .[=]                            |
+  |       | =>01000100000b                  |
+  |-------+---------------------------------|
+  | aba1: | {.[=] p2[prev; next] fork x}    |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+  |      | "aba[bab]xyz"                                   |
+  |------+-------------------------------------------------|
+  |      | fork                                            |
+  |      | =>("aba[bab]xyz";"aba[bab]xyz")                 |
+  |      | p2[aba1 ; (=)prior]                             |
+  |      | =>(01000100000b;00000000000b)                   |
+  |      | p2[::; not]                                     |
+  |      | =>(01000100000b;11111111111b)                   |
+  |      | .[and]                                          |
+  |      | =>01000100000b                                  |
+  |------+-------------------------------------------------|
+  | aba: | {.[and] p2[::; not] p2[aba1 ; (=)prior] fork x} |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))

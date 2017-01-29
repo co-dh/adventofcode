@@ -2,12 +2,10 @@
 
 http://adventofcode.com/2016/day/5
 
-#+BEGIN_SRC q
+#+BEGIN_SRC q :results silent
 p2: {(x z 0; y z 1)} 
 fork: {(x;x)}
 #+END_SRC
-
-#+RESULTS:
 
 
 |        | 0x000004                                                          |
@@ -27,25 +25,30 @@ fork: {(x;x)}
 #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
 
 
-|       | 11000000                                                                                 |
-|-------+------------------------------------------------------------------------------------------|
-|       | til                                                                                      |
-|       | =>0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 ..        |
-|       | string                                                                                   |
-|       | =>(,"0";,"1";,"2";,"3";,"4";,"5";,"6";,"7";,"8";,"9";"10";"11";"12";"13";"14";"..        |
-|       | "ojvtpuvg" ,/:                                                                           |
-|       | =>("ojvtpuvg0";"ojvtpuvg1";"ojvtpuvg2";"ojvtpuvg3";"ojvtpuvg4";"ojvtpuvg5";"ojv..        |
-|       | md5 each                                                                                 |
-|       | =>(0x2fb4adfb908f0b9dc19ef1a493b6f135;0xc574623eb59fd9f0882e2f5762c855c1;0x412e..        |
-|       | (3#) each                                                                                |
-|       | =>(0x2fb4ad;0xc57462;0x412e8c;0xa5a155;0x7f2139;0xe321c2;0x0de2b2;0x5342de;0xa7..        |
-|       | {x  where five0 each x}                                                                  |
-|       | =>(0x000004;0x000005;0x000004;0x000003;0x00000c;0x000001;0x000005;0x000004)              |
-|       | 2 _/:                                                                                    |
-|       | =>(,0x04;,0x05;,0x04;,0x03;,0x0c;,0x01;,0x05;,0x04)                                      |
-|-------+------------------------------------------------------------------------------------------|
-| top5: | top5: 0N! {2 _/: {x  where five0 each x} (3#) each md5 each "ojvtpuvg" ,/: string til x} |
-#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(identity (qf2 $-1 @2$2..@-1$2))
+|       | 20000000                                                                                                                                                                              |
+|-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|       | til                                                                                                                                                                                   |
+|       | =>0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 6.. |
+|       | 0 +                                                                                                                                                                                   |
+|       | =>0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 6.. |
+|       | string                                                                                                                                                                                |
+|       | =>(,"0";,"1";,"2";,"3";,"4";,"5";,"6";,"7";,"8";,"9";"10";"11";"12";"13";"14";"15";"16";"17";"18";"19";"20";"21";"22";"23";"24";"25";"26";"27";"28";"29";"30";"31";"32";"33";"34";".. |
+|       | "ojvtpuvg" ,/:                                                                                                                                                                        |
+|       | =>("ojvtpuvg0";"ojvtpuvg1";"ojvtpuvg2";"ojvtpuvg3";"ojvtpuvg4";"ojvtpuvg5";"ojvtpuvg6";"ojvtpuvg7";"ojvtpuvg8";"ojvtpuvg9";"ojvtpuvg10";"ojvtpuvg11";"ojvtpuvg12";"ojvtpuvg13";"ojv.. |
+|       | md5 each                                                                                                                                                                              |
+|       | =>(0x2fb4adfb908f0b9dc19ef1a493b6f135;0xc574623eb59fd9f0882e2f5762c855c1;0x412e8c216fb93bd5d4138a2c6b32b2f7;0xa5a15538d0019b95755fa48ad09eba49;0x7f2139fad89fdfe0a4620451b87e65b3;0.. |
+|       | (4#) each                                                                                                                                                                             |
+|       | =>(0x2fb4adfb;0xc574623e;0x412e8c21;0xa5a15538;0x7f2139fa;0xe321c21d;0x0de2b24b;0x5342dec6;0xa78f3ce9;0x7720bc93;0x65f4f2e5;0x8ec526f9;0x43c81c2c;0xcde74c37;0xf4f839c4;0x06973042;.. |
+|       | {x  where five0 each x}                                                                                                                                                               |
+|       | =>(0x000004c5;0x000005b6;0x0000049c;0x00000307;0x00000c4b;0x00000101;0x00000574;0x00000439;0x000008b0;0x00000cf7;0x00000bfd;0x0000097d;0x0000025a;0x000004c5;0x000007d5;0x00000c85)   |
+|       | 2 _/:                                                                                                                                                                                 |
+|       | =>(0x04c5;0x05b6;0x049c;0x0307;0x0c4b;0x0101;0x0574;0x0439;0x08b0;0x0cf7;0x0bfd;0x097d;0x025a;0x04c5;0x07d5;0x0c85)                                                                   |
+|-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| top5: | {2 _/: {x  where five0 each x} (4#) each md5 each "ojvtpuvg" ,/: string 0 + til x}                                                                                                    |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+01234567
+1050cbbd 
 
 * Another way to explain q code 
   I'd like to implement a trace function in q, and then show the result in org table.
@@ -56,14 +59,16 @@ fork: {(x;x)}
 To trace,we need to passing the function string and result to the next function.
 We put them in a list.
 
-#+BEGIN_SRC q :results value
-\c 25 160
-trace: {(y, enlist[x], enlist eval[parse x] last y)} 
+#+BEGIN_SRC q :results silent
+traceStep: {(y, enlist[x], enlist eval[parse x] last y)} 
+trace:  { ('[;]) over {traceStep[x;]} each x} 
+fmtStep: {$[10=type x; $[`p2 ~ first p: parse x; "|" sv (-3!) each 1_p; x]; -1 < type x and (4 > count x);  "|" sv (-3!) each x;  (-3!) x]} 
+fmtTrace: {-1 "\n" sv fmtStep each x }
+#+END_SRC
+
+#+BEGIN_SRC q :results value 
 fs : reverse ("fork"; "p2[2#; {x[2]}]"; "p2[0x0000 =; 0x10>]"; "p2[(and/); ::]"; ".[and]")
-f:  ('[;]) over {trace[x;]} each fs
-fmt: {$[10=type x; $[`p2 ~ first p: parse x; "|" sv (-3!) each 1_p; x]; -1 < type x and (4 > count x);  "|" sv (-3!) each x;  (-3!) x]} 
-g: {-1 "\n" sv fmt each f x }
-g enlist[0x000004]
+fmtTrace trace[fs] enlist[0x000004]
 #+END_SRC
 
 #+RESULTS:
@@ -78,11 +83,4 @@ g enlist[0x000004]
 | 1b         | 1b       |      |
 | .[and]     |          |      |
 | 1b         |          |      |
-| -1         |          |      |
 
-
-
-| fork | p2[2#;{x[2]} | p2[0x0000=; 0x10>] | p2[(and/); ::] | .[and] |
-
-| #ERROR |
-#+TBLFM: $1='(qq2 "g enlist[0x000004]")
