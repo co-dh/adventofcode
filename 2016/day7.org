@@ -1,5 +1,5 @@
 * Part 1 
-
+  
 http://adventofcode.com/2016/day/7
 
 #+BEGIN_SRC q :results silent
@@ -76,22 +76,33 @@ http://adventofcode.com/2016/day/7
 | brackets: | {(.[,']) where each p2["["=; "]"=] fork x}                                                      |
 #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
 
-|                 | "luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc"                                                                                       |
-|-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                 | fork                                                                                                                                                                                  |
-|                 | =>("luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc";"luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhfl.. |
-|                 | p2[abba; brackets]                                                                                                                                                                    |
-|                 | =>(,69;(17 36;56 74))                                                                                                                                                                 |
-|                 | (.[within/:])                                                                                                                                                                         |
-|                 | =>(,0b;,1b)                                                                                                                                                                           |
-|                 | raze                                                                                                                                                                                  |
-|                 | =>01b                                                                                                                                                                                 |
-|                 | {$[0 = count x; 1b; any x]}                                                                                                                                                           |
-|                 | =>1b                                                                                                                                                                                  |
-|                 | not                                                                                                                                                                                   |
-|                 | =>0b                                                                                                                                                                                  |
-|-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| abbaNoBrackets: | {not {$[0 = count x; 1b; any x]} raze (.[within/:]) p2[abba; brackets] fork x}                                                                                                        |
+|                 | (69; "luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc") |
+|-----------------+-------------------------------------------------------------------------------------------------------|
+|                 | p2[::; brackets]                                                                                      |
+|                 | =>(69;(17 36;56 74))                                                                                  |
+|                 | (.[within/:])                                                                                         |
+|                 | =>01b                                                                                                 |
+|                 | raze                                                                                                  |
+|                 | =>01b                                                                                                 |
+|                 | {$[0 = count x; 1b; any x]}                                                                           |
+|                 | =>1b                                                                                                  |
+|-----------------+-------------------------------------------------------------------------------------------------------|
+| withinBrackets: | {{$[0 = count x; 1b; any x]} raze (.[within/:]) p2[::; brackets] x}                                   |
+#+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+
+|                 | "luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]rhflhjrqjbbsadjnyc" |
+|-----------------+-------------------------------------------------------------------------------------------------|
+|                 | fork                                                                                            |
+|                 | =>("luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmwwmqa]..               |
+|                 | p2[abba; ::]                                                                                    |
+|                 | =>(,69;"luqpeubugunvgzdqk[jfnihalscclrffkxqz]wvzpvmpfiehevybbgpg[esjuempbtmfmww..               |
+|                 | withinBrackets                                                                                  |
+|                 | =>1b                                                                                            |
+|                 | not                                                                                             |
+|                 | =>0b                                                                                            |
+|-----------------+-------------------------------------------------------------------------------------------------|
+| abbaNoBrackets: | {not withinBrackets p2[abba; ::] fork x}                                                        |
 #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
 
 
@@ -104,7 +115,6 @@ We can verify by:
  
 #+BEGIN_SRC q
 sum abbaNoBrackets each read0 `:7.txt
-
 #+END_SRC 
 
 #+RESULTS:
@@ -113,28 +123,178 @@ sum abbaNoBrackets each read0 `:7.txt
 
 * Part 2
 
-  |       | "aba[bab]xyz"                   |
-  |-------+---------------------------------|
-  |       | fork                            |
-  |       | =>("aba[bab]xyz";"aba[bab]xyz") |
-  |       | p2[prev; next]                  |
-  |       | =>(" aba[bab]xy";"ba[bab]xyz ") |
-  |       | .[=]                            |
-  |       | =>01000100000b                  |
-  |-------+---------------------------------|
-  | aba1: | {.[=] p2[prev; next] fork x}    |
+  |             | "aba[bab]xyz"                   |
+  |-------------+---------------------------------|
+  |             | fork                            |
+  |             | =>("aba[bab]xyz";"aba[bab]xyz") |
+  |             | p2[prev; next]                  |
+  |             | =>(" aba[bab]xy";"ba[bab]xyz ") |
+  |             | .[=]                            |
+  |             | =>01000100000b                  |
+  |-------------+---------------------------------|
+  | prevEqNext: | {.[=] p2[prev; next] fork x}    |
 #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
 
-  |      | "aba[bab]xyz"                                   |
-  |------+-------------------------------------------------|
-  |      | fork                                            |
-  |      | =>("aba[bab]xyz";"aba[bab]xyz")                 |
-  |      | p2[aba1 ; (=)prior]                             |
-  |      | =>(01000100000b;00000000000b)                   |
-  |      | p2[::; not]                                     |
-  |      | =>(01000100000b;11111111111b)                   |
-  |      | .[and]                                          |
-  |      | =>01000100000b                                  |
-  |------+-------------------------------------------------|
-  | aba: | {.[and] p2[::; not] p2[aba1 ; (=)prior] fork x} |
+  |            | "aaa[aaa]xyz"    |
+  |------------+------------------|
+  |            | (=)prior         |
+  |            | =>01100110000b   |
+  |            | not              |
+  |            | =>10011001111b   |
+  |------------+------------------|
+  | notEqPrev: | {not (=)prior x} |
 #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+  |            | "aaa[aaa]xyz"          |
+  |------------+------------------------|
+  |            | (in\:)[; "[]"]         |
+  |            | =>00010001000b         |
+  |            | not                    |
+  |            | =>11101110111b         |
+  |------------+------------------------|
+  | noBracket: | {not (in\:)[; "[]"] x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+  |      | "aaa[aaa]xyz"                                         |
+  |------+-------------------------------------------------------|
+  |      | fork3                                                 |
+  |      | =>("aaa[aaa]xyz";"aaa[aaa]xyz";"aaa[aaa]xyz")         |
+  |      | p3[prevEqNext; notEqPrev; noBracket]                  |
+  |      | =>(01010100000b;10011001111b;11101110111b)            |
+  |      | (and/)                                                |
+  |      | =>00000000000b                                        |
+  |------+-------------------------------------------------------|
+  | aba: | {(and/) p3[prevEqNext; notEqPrev; noBracket] fork3 x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+We can verify by:
+  | aba "aba[bab]xyz" | 01000100000b |
+  | aba "aaa[aaa]xyz" | 00000000000b |
+   #+TBLFM: $2='(qq $1)
+
+ #+BEGIN_SRC q
+filterWith: {x[0] where x[1] each x[0]}
+filterWith (1 5  ; within[;3 7])
+withinAny: { any x within/: y } 
+filterWith (1 5  ; withinAny[;(3 7; 2 8)])
+
+notWithinAny: { not any x within/: y } 
+#+END_SRC
+
+#+RESULTS:
+| ,5 |
+| ,5 |
+|    |
+
+
+
+  |                | "aba[bab]xyz"                                                                          |
+  |----------------+----------------------------------------------------------------------------------------|
+  |                | fork                                                                                   |
+  |                | =>("aba[bab]xyz";"aba[bab]xyz")                                                        |
+  |                | p2[aba; brackets]                                                                      |
+  |                | =>(01000100000b;,3 7)                                                                  |
+  |                | p2[where; {withinAny[;x]}]                                                             |
+  |                | =>(1 5;{any x within/: y }[;,3 7])                                                     |
+  |                | filterWith                                                                             |
+  |                | =>,5                                                                                   |
+  |                | fork                                                                                   |
+  |                | =>(,5;,5)                                                                              |
+  |                | p2[::; 1+]                                                                             |
+  |                | =>(,5;,6)                                                                              |
+  |                | .[,']                                                                                  |
+  |                | =>,5 6                                                                                 |
+  |----------------+----------------------------------------------------------------------------------------|
+  | abaInBrackets: | {.[,'] p2[::; 1+] fork filterWith p2[where; {withinAny[;x]}] p2[aba; brackets] fork x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+Putting @ symbol into the table is causing some trouble, so I defined in q directly.
+#+BEGIN_SRC q
+atEach: (.[@/:])
+atEach ("aba[bab]xyz";enlist[ 5 6])
+#+END_SRC
+
+#+RESULTS:
+| "ab" |
+|      |
+
+  |                   | "aba[bab]xyz"                         |
+  |-------------------+---------------------------------------|
+  |                   | fork                                  |
+  |                   | =>("aba[bab]xyz";"aba[bab]xyz")       |
+  |                   | p2[::; abaInBrackets]                 |
+  |                   | =>("aba[bab]xyz";,5 6)                |
+  |                   | atEach                                |
+  |                   | =>,"ab"                               |
+  |-------------------+---------------------------------------|
+  | abaTxtInBrackets: | {atEach p2[::; abaInBrackets] fork x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+  |                 | "aba[bab]xyz"                                                                             |
+  |-----------------+-------------------------------------------------------------------------------------------|
+  |                 | fork                                                                                      |
+  |                 | =>("aba[bab]xyz";"aba[bab]xyz")                                                           |
+  |                 | p2[aba; brackets]                                                                         |
+  |                 | =>(01000100000b;,3 7)                                                                     |
+  |                 | p2[where; {notWithinAny[;x]}]                                                             |
+  |                 | =>(1 5;{not any x within/: y }[;,3 7])                                                    |
+  |                 | filterWith                                                                                |
+  |                 | =>,1                                                                                      |
+  |                 | fork                                                                                      |
+  |                 | =>(,1;,1)                                                                                 |
+  |                 | p2[::; 1+]                                                                                |
+  |                 | =>(,1;,2)                                                                                 |
+  |                 | .[,']                                                                                     |
+  |                 | =>,1 2                                                                                    |
+  |-----------------+-------------------------------------------------------------------------------------------|
+  | abaOutBrackets: | {.[,'] p2[::; 1+] fork filterWith p2[where; {notWithinAny[;x]}] p2[aba; brackets] fork x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+  |                    | "aba[bab]xyz"                                       |
+  |--------------------+-----------------------------------------------------|
+  |                    | fork                                                |
+  |                    | =>("aba[bab]xyz";"aba[bab]xyz")                     |
+  |                    | p2[::; abaOutBrackets]                              |
+  |                    | =>("aba[bab]xyz";,1 2)                              |
+  |                    | atEach                                              |
+  |                    | =>,"ba"                                             |
+  |                    | reverse each                                        |
+  |                    | =>,"ab"                                             |
+  |--------------------+-----------------------------------------------------|
+  | abaTxtOutBrackets: | {reverse each atEach p2[::; abaOutBrackets] fork x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+
+  |             | "aba[bab]xyz"                                                      |
+  |-------------+--------------------------------------------------------------------|
+  |             | fork                                                               |
+  |             | =>("aba[bab]xyz";"aba[bab]xyz")                                    |
+  |             | p2[abaTxtInBrackets; abaTxtOutBrackets]                            |
+  |             | =>(,"ab";,"ab")                                                    |
+  |             | .[inter]                                                           |
+  |             | =>,"ab"                                                            |
+  |             | count                                                              |
+  |             | =>1                                                                |
+  |             | 0<                                                                 |
+  |             | =>1b                                                               |
+  |-------------+--------------------------------------------------------------------|
+  | supportSSL: | {0< count .[inter] p2[abaTxtInBrackets; abaTxtOutBrackets] fork x} |
+  #+TBLFM: $2='(step2 @# @0 @-1 @1)::@>$2='(qq (qf2 $-1 @2$2..@-1$2))
+
+
+We can verify by:
+  | supportSSL "aba[bab]xyz"   | 1b |
+  | supportSSL "xyx[xyx]xyx"   | 0b |
+  | supportSSL "aaa[kek]eke"   | 1b |
+  | supportSSL "zazbz[bzb]cdb" | 1b |
+   #+TBLFM: $2='(qq $1)
+
+#+BEGIN_SRC q
+sum supportSSL each  read0 `:7.txt
+
+#+END_SRC
+
+#+RESULTS:
+| 231i |
+|      |
+
